@@ -1,20 +1,26 @@
-# Use an official Python runtime as the base image
-FROM python:3.10-slim
+# Use the official Python image
+FROM python:3.9-slim
+
+# Install system dependencies required by psycopg2
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libpq-dev gcc \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt .
+# Copy the requirements.txt into the container
+COPY requirements.txt /app/
 
-# Install dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the FastAPI app code to the container
-COPY . /app
+# Copy the rest of the application code into the container
+COPY . /app/
 
-# Expose the port FastAPI will run on
+# Expose the port the app will run on
 EXPOSE 8000
 
-# Run the FastAPI app with Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Command to run your application (adjust accordingly for your app)
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
